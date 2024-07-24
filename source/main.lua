@@ -34,7 +34,7 @@ local BOOK_SEPARATION <const> = 42
 local BOOK_OFFSET_SIZE <const> = 25
 local FOLDER_SPACING <const> = 385
 -- The font options available
-local FONTS <const> = {
+local FONTS = {
 	{
 		name = "Roboto Slab",
 		font = graphics.font.new("fonts/roboto-slab-12")
@@ -367,7 +367,7 @@ local loadState = function ()
 	end
 	setInverted(getOrDefault(state, "inverted", "boolean", inverted))
 	booksState = getOrDefault(state, "books", "table", {})
-	readerFontId = getOrDefault(state, "font", "number", readerFontId)
+	readerFontId = 1 --getOrDefault(state, "font", "number", readerFontId)
 	crankSpeedModifier = getOrDefault(state, "crankSpeedModifier", "number", crankSpeedModifier)
 	setProgressIndicator(getOrDefault(state, "progressIndicator", "number", progressIndicator))
 	playScrollSound = getOrDefault(state, "playScrollSound", "boolean", playScrollSound)
@@ -403,9 +403,26 @@ local init = function ()
 	-- Ensure that the "book" directory exists while ensuring that later SDK changes
 	-- won't cause this call to overwrite the books directory
 	playdate.file.mkdir("books/.ignore-this")
+	playdate.file.mkdir("fonts/.ignore-this")
 
 	-- Load the state
 	loadState()
+
+	-- Fetch fonts -- TODO - scanForFonts function
+	local files = playdate.file.listFiles("fonts")
+	for i = 1, #files do
+		if sub(files[i], #files[i] - 3) == ".fnt" then
+			insert(FONTS,{
+				name = files[i],
+				font = graphics.font.new(files[i])
+				-- TODO - handle size? maybe add as option?
+			})
+			insert(MENU_OPTIONS[2].options, files[i])
+		end
+	end
+	-- set font after having loaded -- TODO - verify length/change to k-v pairs
+	--readerFontId = getOrDefault(state, "font", "number", readerFontId)
+
 
 	-- Load the font
 	graphics.setFont(FONTS[readerFontId].font)
