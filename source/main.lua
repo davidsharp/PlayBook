@@ -122,7 +122,7 @@ local titleAnimationProgress = 0
 local titleImage <const> = graphics.image.new("images/title.png")
 -- A list of potential subtitles to display
 local POSSIBLE_SUBTITLES <const> = {
-	{"Made by Idrees"},
+	{"Made by Idrees", "Hacked by David Sharp"},
 	{ "A reader lives a thousand", "lives before he dies" },
 	{"Books are a uniquely", "portable magic"},
 	{"Books are the mirrors", "of the soul."},
