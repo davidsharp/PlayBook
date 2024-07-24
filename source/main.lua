@@ -367,7 +367,7 @@ local loadState = function ()
 	end
 	setInverted(getOrDefault(state, "inverted", "boolean", inverted))
 	booksState = getOrDefault(state, "books", "table", {})
-	readerFontId = 1 --getOrDefault(state, "font", "number", readerFontId)
+	readerFontId = getOrDefault(state, "font", "number", readerFontId)
 	crankSpeedModifier = getOrDefault(state, "crankSpeedModifier", "number", crankSpeedModifier)
 	setProgressIndicator(getOrDefault(state, "progressIndicator", "number", progressIndicator))
 	playScrollSound = getOrDefault(state, "playScrollSound", "boolean", playScrollSound)
@@ -405,24 +405,25 @@ local init = function ()
 	playdate.file.mkdir("books/.ignore-this")
 	playdate.file.mkdir("fonts/.ignore-this")
 
-	-- Load the state
-	loadState()
-
-	-- Fetch fonts -- TODO - scanForFonts function
+	-- Fetch fonts -- TODO - scanForFonts function?
 	local files = playdate.file.listFiles("fonts")
 	for i = 1, #files do
 		if sub(files[i], #files[i] - 3) == ".fnt" then
+			-- TODO - add a DEFAULT_FONTS array and concat
 			insert(FONTS,{
 				name = files[i],
 				font = graphics.font.new(files[i])
 				-- TODO - handle size? maybe add as option?
 			})
+			-- add to options
 			insert(MENU_OPTIONS[2].options, files[i])
 		end
 	end
-	-- set font after having loaded -- TODO - verify length/change to k-v pairs
-	--readerFontId = getOrDefault(state, "font", "number", readerFontId)
 
+	-- Load the state
+	loadState()
+	-- handle invalid font ID -- TODO - change to k-v pairs?
+	if #FONTS < readerFontId then readerFontId = 1 end
 
 	-- Load the font
 	graphics.setFont(FONTS[readerFontId].font)
